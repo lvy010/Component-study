@@ -65,4 +65,28 @@ typedef struct st_mysql_res {
     void *extension;
 } MYSQL_RES;
 
+typedef struct st_mysql_field {
+    char *name;           /* Name of column */
+    char *org_name;       /* Original column name, if an alias */
+    char *table;          /* Table of column if column was a field */
+    char *org_table;      /* Org table name, if table was an alias */
+    char *db;             /* Database for table */
+    char *catalog;        /* Catalog for table */
+    char *def;            /* Default value (set by mysql_list_fields) */
+    unsigned long length;     /* Width of column (create length) */
+    unsigned long max_length; /* Max width for selected set */
+    unsigned int name_length;
+    unsigned int org_name_length;
+    unsigned int table_length;
+    unsigned int org_table_length;
+    unsigned int db_length;
+    unsigned int catalog_length;
+    unsigned int def_length;
+    unsigned int flags;       /* Div flags */
+    unsigned int decimals;    /* Number of decimals in field */
+    unsigned int charsetnr;   /* Character set */
+    enum enum_field_types type; /* Type of field. See mysql_com.h for types */
+    void *extension;
+} MYSQL_FIELD;
+
 #endif // MYSQL_STRUCT_H 

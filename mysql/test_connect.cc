@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <mysql/mysql.h>
+#include <cstring>
 
 const std::string host = "127.0.0.1";
 const std::string user = "connector";
@@ -27,31 +28,66 @@ int main()
     mysql_set_character_set(my, "utf8");
     std::cout << "connect success" << std::endl;
 
-    std::string sql = "update user set name='李四' where id=2";
+    std::string sql = "select * from user";
     int n = mysql_query(my, sql.c_str());
     if(n == 0)
     {
         std::cout << sql << " success" << std::endl;
+        // 判断是否为SELECT语句
+        if(sql.size() >= 6 && strncasecmp(sql.c_str(), "select", 6) == 0)
+        {
+            MYSQL_RES *res = mysql_store_result(my);
+            if(nullptr == res)
+            {
+                std::cerr << "mysql_store_result error: " << mysql_error(my) << std::endl;
+                mysql_close(my);
+                return 4;
+            }
+            int num_fields = mysql_num_fields(res);
+            int num_rows = mysql_num_rows(res);
+            std::cout << "行: " << num_rows << std::endl;
+            std::cout << "列: " << num_fields << std::endl;
+
+        //    typedef char** MYSQL_ROW;
+        //    typedef struct st_mysql_row {
+        //     char **data;
+        //     unsigned long *lengths;
+        //    } MYSQL_ROW;
+
+            // 打印内容
+            for(int i = 0; i < num_rows; i++)
+            {
+                MYSQL_ROW row = mysql_fetch_row(res);
+                for(int j = 0; j < num_fields; j++)
+                {
+                    std::cout << (row[j] ? row[j] : "NULL") << "\t";
+                }
+                std::cout << std::endl;
+            }
+            mysql_free_result(res);
+        }
     }
     else
     {
-    std::cout << sql << " failed: " << mysql_error(my) << std::endl;
-    return 3;
+        std::cout << sql << " failed: " << mysql_error(my) << std::endl;
+        mysql_close(my);
+        return 3;
     }
 
-/*
 
-
-
-
-*/
-    MYSQL_RES *res = mysql_store_result(my);
-    if(nullptr == res)
-    {
-        std::cerr << "mysql_store_result error: " << mysql_error(my) << std::endl;
-        return 4;
-    }
+    // The following block is removed as per the edit hint.
+    // MYSQL_RES *res = mysql_store_result(my);
+    // if(nullptr == res)
+    // {
+    //     std::cerr << "mysql_store_result error: " << mysql_error(my) << std::endl;
+    //     return 4;
+    // }
     
+    // int num_fields = mysql_num_fields(res);
+    // int num_rows = mysql_num_rows(res);
+    // std::cout << "行: " << num_rows << std::endl;
+    // std::cout << "列: " << num_fields << std::endl;
+
     mysql_close(my);
     return 0;
 } 
