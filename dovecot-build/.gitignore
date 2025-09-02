@@ -1,0 +1,30 @@
+# 忽略 Dovecot 源代码构建目录
+core/
+
+# 忽略编译生成的文件
+*.o
+*.so
+*.a
+*.la
+*.lo
+
+# 忽略构建临时文件
+.deps/
+.libs/
+autom4te.cache/
+config.log
+config.status
+libtool
+stamp-h1
+Makefile
+configure
+
+# 忽略其他临时文件
+*~
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# 保留文档文件（显式说明，实际上不忽略就会被包含）
+# dovecot-build-from-git.md 会被包含在版本控制中
